@@ -1,30 +1,22 @@
-name: Docker Bench Security
+name: Docker Bench Security on New Image
 
 on:
   push:
     branches:
-      - main
-  pull_request:
+      - main # Se ejecuta en los cambios de la rama principal
+  workflow_dispatch: # Permite ejecución manual
 
 jobs:
-  docker-bench-security:
+  security-scan:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Docker
+      - name: Build Docker Image
         run: |
-          sudo apt update
-          sudo apt install -y docker.io
-
-      - name: Clone Docker Bench Security
-        run: |
-          git clone https://github.com/docker/docker-bench-security.git
-          cd docker-bench-security
-          sudo chmod +x docker-bench-security.sh
+          docker build -t my-image:latest .
 
       - name: Run Docker Bench Security
-        run: |
-          cd docker-bench-security
-          sudo ./docker-bench-security.sh
+        run: ./docker-bench-security.sh
