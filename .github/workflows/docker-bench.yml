@@ -1,0 +1,35 @@
+name: Docker Bench Security
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  security-benchmark:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build Docker image
+      run: |
+        docker build -t docker-bench-security .
+
+    - name: Run Docker Bench Security
+      run: |
+        docker run --rm docker-bench-security > resultado_de_seguridad.txt
+
+    - name: Upload results to Google Cloud Storage
+      uses: google-github-actions/upload-cloud-storage@v0
+      with:
+        bucket: your-bucket-name
+        file: resultado_de_seguridad.txt
+        destination: security-reports/resultado_de_seguridad.txt
